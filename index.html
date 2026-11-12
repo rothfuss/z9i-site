@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Z9 Innovation</title>
+  <meta name="description" content="Z9 Innovation">
+  <style>
+    :root {
+      --bg: #f7f7f5;
+      --fg: #18181b;
+      --muted: #6b6b70;
+      --accent: #2563eb;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111113;
+        --fg: #f4f4f5;
+        --muted: #a1a1aa;
+        --accent: #60a5fa;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px 16px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      text-align: center;
+    }
+    .mark {
+      font-size: clamp(3rem, 14vw, 6rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin: 0;
+    }
+    .mark span { color: var(--accent); }
+    h1 {
+      font-size: clamp(1.25rem, 4vw, 1.75rem);
+      font-weight: 600;
+      margin: 0.75rem 0 0.5rem;
+    }
+    p {
+      color: var(--muted);
+      margin: 0;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="mark">Z<span>9</span></p>
+    <h1>Z9 Innovation</h1>
+    <p>New site coming soon.</p>
+  </main>
+</body>
+</html>
