@@ -17,7 +17,7 @@
   <link rel="modulepreload" href="js/game.js">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cinzel:wght@700&family=Cormorant+Garamond:wght@600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cinzel:wght@700&family=Cormorant+Garamond:wght@600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --page: #9fd0f5;
@@ -175,62 +175,6 @@
       footer .dot { display: none; }
       footer strong { display: block; }
     }
-
-    /* ---- 80s arcade high-score screen ---- */
-    .arcade {
-      position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; padding: 16px;
-      background: radial-gradient(ellipse at center, rgba(8, 4, 28, .55), rgba(4, 2, 16, .88));
-      -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
-    }
-    .arcade[hidden] { display: none; }
-    .arc-card {
-      position: relative; width: min(100%, 440px); max-height: 100%; overflow: auto; outline: none;
-      padding: 26px 18px 20px; text-align: center; color: #fff; background: #07061a;
-      font-family: "Press Start 2P", "Courier New", monospace; border-radius: 6px;
-      border: 3px solid #ff2d95;
-      box-shadow: 0 0 0 3px #07061a, 0 0 0 5px #22e3ff, 0 0 40px rgba(255, 45, 149, .55), inset 0 0 44px rgba(34, 227, 255, .12);
-    }
-    .arc-card::after {
-      content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: 3px;
-      background: repeating-linear-gradient(0deg, rgba(0, 0, 0, .3) 0 1px, transparent 1px 3px);
-    }
-    .arc-title {
-      margin: 0 0 18px; font-size: clamp(15px, 4.6vw, 22px); font-weight: 400; letter-spacing: .06em; color: #ffe14d;
-      text-shadow: 3px 3px 0 #ff2d95, 0 0 18px rgba(255, 225, 77, .7);
-      animation: arcHue 4s linear infinite;
-    }
-    .arc-line { margin: 0 0 12px; font-size: clamp(9px, 2.6vw, 12px); line-height: 1.6; color: #3fd8ff; text-shadow: 0 0 8px rgba(63, 216, 255, .7); }
-    .arc-line b { font-weight: 400; color: #fff; margin-left: 6px; }
-    .arc-line.dim { color: #ff9ad0; text-shadow: 0 0 8px rgba(255, 45, 149, .6); margin-top: 18px; }
-    .arc-table { list-style: none; margin: 4px 0 18px; padding: 0; display: grid; gap: 10px; }
-    .arc-table li {
-      display: grid; grid-template-columns: 3.2em 1fr auto; gap: 10px; align-items: center; text-align: left;
-      font-size: clamp(10px, 3vw, 14px); letter-spacing: .04em; padding: 2px 6px;
-      text-shadow: 0 0 10px currentColor;
-    }
-    .arc-table li span:nth-child(2) { text-align: center; }
-    .r1 { color: #ff3b3b; } .r2 { color: #ff9a2e; } .r3 { color: #ffe14d; } .r4 { color: #4dff88; } .r5 { color: #3fd8ff; }
-    .arc-table li.new { animation: arcBlink .7s steps(2, start) infinite; background: rgba(255, 255, 255, .08); }
-    .arc-initials { display: flex; justify-content: center; gap: clamp(10px, 4vw, 22px); margin: 8px 0 6px; }
-    .arc-col { display: grid; justify-items: center; gap: 4px; }
-    .arc-arrow {
-      width: 48px; height: 36px; border: 2px solid #3fd8ff; border-radius: 4px; background: transparent; color: #3fd8ff;
-      font: inherit; font-size: 12px; cursor: pointer; touch-action: manipulation;
-    }
-    .arc-arrow:hover, .arc-arrow:focus-visible { background: #3fd8ff; color: #07061a; outline: none; }
-    .arc-ch { display: block; width: 1.3em; font-size: clamp(26px, 8vw, 38px); color: #ffe14d; cursor: pointer; padding-bottom: 6px; border-bottom: 4px solid transparent; text-shadow: 0 0 14px rgba(255, 225, 77, .7); }
-    .arc-ch.cur { border-bottom-color: #ff2d95; animation: arcBlink .8s steps(2, start) infinite; }
-    .arc-err { min-height: 1.4em; margin: 8px 0 4px; font-size: 10px; color: #ff5a5a; }
-    .arc-btn {
-      display: inline-block; margin: 6px 0 0; padding: 12px 22px; border: 3px solid #ffe14d; border-radius: 4px; background: transparent;
-      color: #ffe14d; font: inherit; font-size: clamp(10px, 3vw, 13px); letter-spacing: .08em; cursor: pointer; touch-action: manipulation;
-      text-shadow: 0 0 10px rgba(255, 225, 77, .7);
-    }
-    .arc-btn:hover, .arc-btn:focus-visible { background: #ffe14d; color: #07061a; outline: none; text-shadow: none; }
-    .arc-note { margin: 16px 0 0; font-size: 8px; line-height: 1.7; color: rgba(255, 255, 255, .45); }
-    @keyframes arcBlink { 50% { opacity: .25; } }
-    @keyframes arcHue { to { filter: hue-rotate(360deg); } }
-    @media (prefers-reduced-motion: reduce) { .arc-title, .arc-table li.new, .arc-ch.cur { animation: none; } }
     noscript {
       position: absolute; inset: 0; display: grid; place-items: center;
       font-size: 22px; color: #0d1224; text-align: center; padding: 24px;
@@ -247,9 +191,6 @@
       <svg class="main" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
       <svg class="alt" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
     </button>
-    <button id="scoresBtn" type="button" aria-label="High scores">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H5v1.5A3 3 0 0 0 8 10.5M16 6h3v1.5a3 3 0 0 1-3 3"/><path d="M12 13v4M8.5 20h7M10 17h4"/></svg>
-    </button>
     <button id="help" type="button" aria-pressed="false" aria-label="How to play">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.2 9a3 3 0 1 1 4.4 2.7c-1 .6-1.6 1.2-1.6 2.3"/><circle cx="12" cy="17.6" r=".6" fill="currentColor"/></svg>
     </button>
@@ -264,8 +205,6 @@
       <h2>Theme</h2>
     </div>
   </div>
-
-  <div class="arcade" id="arcade" role="dialog" aria-modal="true" aria-labelledby="arcTitle" hidden></div>
 
   <footer id="footer">
     <p><strong>Z9 Innovation LLC</strong> <span class="dot">&middot; </span>Advanced technology &amp; innovation consulting</p>

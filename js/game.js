@@ -15,8 +15,6 @@ import {
   rand, clamp, pick, rgba, mkCanvas, unitSprite, burst, puff, soft, circ, rgrad, rrectPath,
 } from './core.js';
 
-import * as Scores from './scores.js';
-
 const THEMES = [
   { id: 'daybreak', name: 'Daybreak', desc: 'Sunrise harbor, glass towers, sailboats', swatch: 'linear-gradient(160deg,#5aa9ec,#bfe1f7 45%,#ffd9b0 70%,#ff5f8f)', page: '#9fd0f5', load: () => import('./themes/daybreak.js') },
   { id: 'laramie', name: 'Laramie', desc: 'Looking west to the Snowy Range', swatch: 'linear-gradient(170deg,#1b5fb4,#8fc4ee 45%,#e9eef2 52%,#d9bd7a 70%,#7a5a36)', page: '#4d97dc', load: () => import('./themes/laramie.js') },
@@ -32,7 +30,6 @@ const ctx = canvas.getContext('2d');
 const footerEl = document.getElementById('footer');
 const pauseBtn = document.getElementById('pause');
 const helpBtn = document.getElementById('help');
-const scoresBtn = document.getElementById('scoresBtn');
 const muteBtn = document.getElementById('mute');
 const themeBtn = document.getElementById('themeBtn');
 const themeMenu = document.getElementById('themeMenu');
@@ -55,8 +52,7 @@ let tally = null, tallyTimer = 0, banner = null, shake = 0, flash = 0;
 let overTimer = 0, endingTimer = -1, aiTimer = 0, smokeTimer = 0, hint = 1, helpOn = false, helpA = 0;
 let markers = [], ghosts = [];
 const pointer = game.pointer;
-Scores.onChange(() => { high = Scores.best(); });
-Scores.load();
+try { high = parseInt(localStorage.getItem('z9-high') || '0', 10) || 0; } catch (e) {}
 
 const cityX = c => (T.cityX ? T.cityX(c.i) : c.fx * W);
 const baseX = b => (T.baseX ? T.baseX(b.i) : b.fx * W);
@@ -293,8 +289,11 @@ function gameOver() {
   overTimer = 0;
   game.paused = false;
   syncButtons();
+  if (score > high) {
+    high = score;
+    try { localStorage.setItem('z9-high', String(high)); } catch (e) {}
+  }
   sfx.over();
-  Scores.showGameOver(score, () => newGame(false));
 }
 
 // Autopilot: leads the lowest unclaimed missile from the nearest base that still has ammo.
@@ -474,7 +473,7 @@ function update(dt) {
     endingTimer += dt;
     if (endingTimer > (game.auto ? 2.5 : 1.6)) { if (game.auto) newGame(true); else gameOver(); }
   }
-  if (game.mode === 'gameover') { overTimer += dt; if (overTimer > 45 && !Scores.entering()) { Scores.hide(); newGame(true); } }
+  if (game.mode === 'gameover') { overTimer += dt; if (overTimer > 18) newGame(true); }
 }
 
 // ---------------------------------------------------------------- layout
@@ -773,6 +772,20 @@ function drawHUD() {
     ctx.globalAlpha = 1;
   }
 
+  if (game.mode === 'gameover') {
+    const lh = t2 * 2;
+    panel(cx, textY + lh * 1.6, pw, lh * 5.4);
+    txt('GAME OVER', cx, textY, t1, ui.warn, { weight: 700, spacing: 8 });
+    txt('SCORE  ' + score, cx, textY + lh * 1.3, t2 + 2, ui.ptext, { weight: 700, spacing: 2, font: MONO });
+    const best = score >= high && score > 0;
+    txt(best ? 'NEW HIGH SCORE' : 'HIGH  ' + high, cx, textY + lh * 2.2, t2, best ? ui.gold : ui.pmuted, { weight: best ? 700 : 500, spacing: 2, font: MONO });
+    if (overTimer > 1.2) {
+      ctx.globalAlpha = 0.6 + 0.4 * Math.sin(time * 2.6);
+      txt(touchOnly ? 'TAP TO PLAY AGAIN' : 'CLICK TO PLAY AGAIN', cx, textY + lh * 3.3, t2, ui.accent, { weight: 600, font: SANS, spacing: 3 });
+      ctx.globalAlpha = 1;
+    }
+  }
+
   if (game.paused) {
     ctx.fillStyle = ui.veil || 'rgba(255,255,255,0.35)';
     ctx.fillRect(0, 0, W, G);
@@ -995,12 +1008,6 @@ function setPaused(p) {
   game.paused = p;
   syncButtons();
 }
-scoresBtn.addEventListener('click', () => {
-  if (Scores.isOpen()) return;
-  const wasPlaying = game.mode === 'playing' && !game.auto && !game.paused;
-  if (wasPlaying) setPaused(true);
-  Scores.showTable(() => { if (wasPlaying) setPaused(false); });
-});
 helpBtn.addEventListener('click', () => { helpOn = !helpOn; helpBtn.setAttribute('aria-pressed', String(helpOn)); });
 pauseBtn.addEventListener('click', () => { pausedByMenu = false; setPaused(!game.paused); });
 
@@ -1030,7 +1037,6 @@ canvas.addEventListener('pointerdown', e => {
   fire(e.clientX, e.clientY);
 });
 window.addEventListener('keydown', e => {
-  if (Scores.isOpen()) return;
   const k = e.key.toLowerCase();
   if (k === 'escape' && !themeMenu.hidden) { closeMenu(); themeBtn.focus(); return; }
   if (e.target && e.target.closest && e.target.closest('.menu')) return;
@@ -1070,7 +1076,6 @@ if (document.fonts && document.fonts.load) {
 
   await setTheme(start, false);
   newGame(true);                                   // the game is live as soon as the page loads
-  if (new URLSearchParams(location.search).has('debug')) window.__z9go = sc => { game.auto = false; game.mode = 'playing'; score = sc; gameOver(); };
   if (new URLSearchParams(location.search).has('debug')) window.__z9 = () => ({ mode: game.mode, auto: game.auto, dead: game.cities.filter(c => !c.alive).length, wave, score, low: game.lowFx });
 
   let last = performance.now(), slow = 0;
