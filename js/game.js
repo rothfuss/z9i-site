@@ -29,6 +29,7 @@ const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 const footerEl = document.getElementById('footer');
 const pauseBtn = document.getElementById('pause');
+const helpBtn = document.getElementById('help');
 const muteBtn = document.getElementById('mute');
 const themeBtn = document.getElementById('themeBtn');
 const themeMenu = document.getElementById('themeMenu');
@@ -48,7 +49,7 @@ let fade = null;                  // snapshot of the previous theme, cross-faded
 let score = 0, shown = 0, wave = 0, mult = 1, nextBonus = 10000, high = 0;
 let phase = 'wave', remaining = 0, salvoTimer = 0, sinceSalvo = 0, waveTargets = [];
 let tally = null, tallyTimer = 0, banner = null, shake = 0, flash = 0;
-let overTimer = 0, endingTimer = -1, aiTimer = 0, smokeTimer = 0, hint = 1;
+let overTimer = 0, endingTimer = -1, aiTimer = 0, smokeTimer = 0, hint = 1, helpOn = false, helpA = 0;
 let markers = [], ghosts = [];
 const pointer = game.pointer;
 try { high = parseInt(localStorage.getItem('z9-high') || '0', 10) || 0; } catch (e) {}
@@ -329,6 +330,7 @@ function update(dt) {
   if (flash > 0) flash = Math.max(0, flash - dt * 2.4);
   if (banner) { banner.t -= dt; if (banner.t <= 0) banner = null; }
   hint += ((game.auto ? 1 : 0) - hint) * Math.min(1, dt * 6);
+  helpA += ((helpOn ? 1 : 0) - helpA) * Math.min(1, dt * 8);
   shown += (score - shown) * Math.min(1, dt * 9);
   if (T.tick) T.tick(dt);
 
@@ -728,10 +730,11 @@ function drawHUD() {
     txt('HIGH ' + String(high).padStart(6, '0'), pad, pad + small / 2, small, ui.muted, { align: 'left', spacing: 2, shadow: sh, font: MONO });
   }
 
-  if (hint > 0.02 && game.mode === 'playing') {     // autopilot is defending; any shot takes over
+  if (helpA > 0.02 && game.mode === 'playing') {     // how-to card, only when the ? button is on
+    const hint = helpA;
     ctx.globalAlpha = hint;
     ctx.font = t2 + 'px ' + SANS;
-    const l2 = T.prompt, l3 = 'Autopilot is defending until you take over.';
+    const l2 = T.prompt, l3 = game.auto ? 'Autopilot is defending until you take over.' : 'Missiles fall; your interceptors explode where you aim.';
     const lines = touchOnly ? 3 : 4, l4 = 'A  S  D  pick a base   ·   P  pause   ·   T  theme';
     let aw = Math.max(ctx.measureText(l2).width, ctx.measureText(l3).width, 250);
     if (lines === 4) { ctx.font = '500 ' + (t2 - 1) + 'px ' + MONO; aw = Math.max(aw, ctx.measureText(l4).width + l4.length); }
@@ -1005,6 +1008,7 @@ function setPaused(p) {
   game.paused = p;
   syncButtons();
 }
+helpBtn.addEventListener('click', () => { helpOn = !helpOn; helpBtn.setAttribute('aria-pressed', String(helpOn)); });
 pauseBtn.addEventListener('click', () => { pausedByMenu = false; setPaused(!game.paused); });
 
 try { muted = localStorage.getItem('z9-sound') !== '1'; } catch (e) {}
@@ -1060,11 +1064,11 @@ if (document.fonts && document.fonts.load) {
 
 // ---------------------------------------------------------------- start
 (async () => {
-  let start = 'daybreak';
+  let start = 'laramie';
   try { start = localStorage.getItem('z9-theme') || start; } catch (e) {}
   const qp = new URLSearchParams(location.search).get('theme');
   if (qp && THEMES.some(t => t.id === qp)) start = qp;
-  if (!THEMES.some(t => t.id === start)) start = 'daybreak';
+  if (!THEMES.some(t => t.id === start)) start = 'laramie';
 
   logoImg = new Image();
   logoImg.onload = buildBrand;
